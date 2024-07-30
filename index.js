@@ -138,7 +138,7 @@ let heroku = {
   dontautocreate: core.getInput("dontautocreate") === "false" ? false : true,
   usedocker: core.getInput("usedocker") === "false" ? false : true,
   dockerHerokuProcessType: core.getInput("docker_heroku_process_type"),
-  dockerBuildArgs: core.getInput("docker_build_args"),
+  dockerBuildArgs: core.getMultilineInput("docker_build_args"),
   appdir: core.getInput("appdir"),
   healthcheck: core.getInput("healthcheck"),
   checkstring: core.getInput("checkstring"),
@@ -165,6 +165,7 @@ if (heroku.appdir) {
 
 // Collate docker build args into arg list
 if (heroku.dockerBuildArgs) {
+  console.log(`Found docker build args: ${heroku.dockerBuildArgs}`);
   heroku.dockerBuildArgs = heroku.dockerBuildArgs
     .split("\n")
     .map((arg) => `${arg}="${process.env[arg]}"`)
@@ -172,6 +173,8 @@ if (heroku.dockerBuildArgs) {
   heroku.dockerBuildArgs = heroku.dockerBuildArgs
     ? `--arg ${heroku.dockerBuildArgs}`
     : "";
+} else {
+    console.log("No build args found for docker build")
 }
 
 (async () => {
